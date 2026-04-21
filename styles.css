@@ -140,9 +140,8 @@ body {
   animation: fadeIn 0.8s ease-out;
 }
 
-.controls-panel, .results-panel { grid-column: span 4; }
-.quiz-panel, .manager-panel { grid-column: span 8; }
-.import-panel { grid-column: span 12; }
+.controls-panel { grid-column: span 4; }
+.quiz-panel { grid-column: span 8; }
 
 .panel-heading {
   margin-bottom: 24px;
@@ -468,6 +467,69 @@ button.ghost:hover {
   box-shadow: 0 0 10px var(--primary-soft);
 }
 
+/* Sidebar Menu */
+.sidemenu-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(2, 6, 23, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  transition: opacity 0.3s ease;
+}
+
+.sidemenu {
+  position: fixed;
+  top: 0; bottom: 0; right: 0;
+  width: 500px;
+  max-width: 100vw;
+  background: var(--bg-gradient-start);
+  border-left: 1px solid var(--panel-border);
+  box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+.sidemenu.right-closed {
+  transform: translateX(100%);
+}
+
+.sidemenu-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--panel-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidemenu-header h2 { margin: 0; }
+.close-btn { border-radius: 50%; width: 40px; height: 40px; display: grid; place-items: center; font-size: 1.5rem; }
+
+.sidemenu-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: grid;
+  gap: 20px;
+}
+
+/* Feedback Box */
+.feedback-box {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid transparent;
+}
+.feedback-box.correct { background: var(--success-soft); color: #34d399; border-color: var(--success); }
+.feedback-box.wrong { background: var(--danger-soft); color: #f87171; border-color: var(--danger); }
+.feedback-box.warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: #f59e0b; }
+
 /* Animations & Queries */
 @keyframes fadeInDown {
   from { opacity: 0; transform: translateY(-20px); }
@@ -480,8 +542,11 @@ button.ghost:hover {
 }
 
 @media (max-width: 1024px) {
-  .controls-panel, .results-panel, .quiz-panel, .manager-panel {
+  .controls-panel, .quiz-panel {
     grid-column: span 12;
+  }
+  .sidemenu {
+    width: 100vw;
   }
   .hero {
     flex-direction: column;

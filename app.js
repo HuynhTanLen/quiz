@@ -6,6 +6,7 @@ const state = {
   quiz: [],
   answers: {},
   currentIndex: 0,
+  isGraded: false,
 };
 
 const elements = {
@@ -26,8 +27,12 @@ const elements = {
   prevBtn: document.getElementById("prevBtn"),
   nextBtn: document.getElementById("nextBtn"),
   submitBtn: document.getElementById("submitBtn"),
-  resultSummary: document.getElementById("resultSummary"),
-  resultDetails: document.getElementById("resultDetails"),
+  searchInput: document.getElementById("searchInput"),
+  inlineFeedback: document.getElementById("inlineFeedback"),
+  menuToggleBtn: document.getElementById("menuToggleBtn"),
+  closeMenuBtn: document.getElementById("closeMenuBtn"),
+  sideMenuOverlay: document.getElementById("sideMenuOverlay"),
+  sideMenu: document.getElementById("sideMenu"),
   searchInput: document.getElementById("searchInput"),
   questionList: document.getElementById("questionList"),
   ocrInput: document.getElementById("ocrInput"),
@@ -61,6 +66,14 @@ function bindEvents() {
   elements.searchInput.addEventListener("input", renderQuestionList);
   elements.parseOcrBtn.addEventListener("click", parseOcrInput);
   elements.exportBtn.addEventListener("click", exportCurrentData);
+  elements.menuToggleBtn.addEventListener("click", toggleMenu);
+  elements.closeMenuBtn.addEventListener("click", toggleMenu);
+  elements.sideMenuOverlay.addEventListener("click", toggleMenu);
+}
+
+function toggleMenu() {
+  elements.sideMenu.classList.toggle("right-closed");
+  elements.sideMenuOverlay.classList.toggle("hidden");
 }
 
 function renderStats() {
@@ -81,6 +94,7 @@ function startQuiz() {
   state.answers = {};
   state.currentIndex = 0;
   state.quiz = [...state.bank];
+  state.isGraded = false;
 
   if (shuffleQuestions) {
     shuffleInPlace(state.quiz);
@@ -102,11 +116,10 @@ function startQuiz() {
     return;
   }
 
-  elements.quizStatus.textContent = `Da tao de ${state.quiz.length} cau.`;
+  elements.quizStatus.textContent = `Da tao de ${state.quiz.length} cau. Dang lam bai...`;
   elements.quizEmptyState.classList.add("hidden");
   elements.quizCard.classList.remove("hidden");
-  elements.resultSummary.textContent = "Dang lam bai.";
-  elements.resultDetails.innerHTML = "";
+  elements.inlineFeedback.classList.add("hidden");
   renderCurrentQuestion();
 }
 
@@ -114,11 +127,11 @@ function resetQuiz() {
   state.quiz = [];
   state.answers = {};
   state.currentIndex = 0;
+  state.isGraded = false;
   elements.quizStatus.textContent = "San sang tai ngan hang cau hoi.";
   elements.quizEmptyState.classList.remove("hidden");
   elements.quizCard.classList.add("hidden");
-  elements.resultSummary.textContent = "Chua co ket qua.";
-  elements.resultDetails.innerHTML = "";
+  elements.inlineFeedback.classList.add("hidden");
 }
 
 function renderCurrentQuestion() {
@@ -135,16 +148,42 @@ function renderCurrentQuestion() {
     button.className = "option-btn";
     button.textContent = `${label}. ${text}`;
 
-    if (state.answers[question.id] === label) {
+    const isPicked = state.answers[question.id] === label;
+    if (isPicked) {
       button.classList.add("selected");
     }
 
+    if (state.isGraded) {
+      if (question.answer === label) {
+        button.classList.add("correct");
+      } else if (isPicked && question.answer !== label) {
+        button.classList.add("wrong");
+      }
+    }
+
     button.addEventListener("click", () => {
+      if (state.isGraded) return;
       state.answers[question.id] = label;
       renderCurrentQuestion();
     });
     elements.optionsList.appendChild(button);
   });
+
+  elements.inlineFeedback.className = "feedback-box hidden";
+  if (state.isGraded) {
+    elements.inlineFeedback.classList.remove("hidden");
+    const picked = state.answers[question.id];
+    if (!question.answer) {
+      elements.inlineFeedback.classList.add("warning");
+      elements.inlineFeedback.innerHTML = "⚠️ Câu này chưa có đáp án trong ngân hàng dữ liệu.";
+    } else if (picked === question.answer) {
+      elements.inlineFeedback.classList.add("correct");
+      elements.inlineFeedback.innerHTML = "✅ Chính xác!";
+    } else {
+      elements.inlineFeedback.classList.add("wrong");
+      elements.inlineFeedback.innerHTML = `❌ Sai rồi. Đáp án đúng là: <strong>${question.answer}</strong>`;
+    }
+  }
 }
 
 function moveQuestion(step) {
@@ -157,44 +196,28 @@ function moveQuestion(step) {
 function submitQuiz() {
   if (!state.quiz.length) return;
 
+  state.isGraded = true;
+  
   let graded = 0;
   let correct = 0;
   let unansweredKey = 0;
 
-  elements.resultDetails.innerHTML = "";
-
   state.quiz.forEach((question) => {
     const picked = state.answers[question.id] ?? null;
-    const card = document.createElement("div");
-    card.className = "result-item";
-
     if (question.answer) {
       graded += 1;
-      const isCorrect = picked === question.answer;
-      if (isCorrect) correct += 1;
-      card.innerHTML = `
-        <strong>Cau ${question.id}</strong><br />
-        Ban chon: ${picked ?? "Chua chon"}<br />
-        Dap an: ${question.answer}<br />
-        Ket qua: ${isCorrect ? "Dung" : "Sai"}
-      `;
+      if (picked === question.answer) correct += 1;
     } else {
       unansweredKey += 1;
-      card.innerHTML = `
-        <strong>Cau ${question.id}</strong><br />
-        Ban chon: ${picked ?? "Chua chon"}<br />
-        Chua co dap an trong ngan hang.
-      `;
     }
-
-    elements.resultDetails.appendChild(card);
   });
 
   const scoreText = graded
-    ? `${correct}/${graded} cau dung trong nhom co dap an`
-    : "Chua co cau nao co dap an de cham";
+    ? `Hoàn thành! Bạn đúng ${correct}/${graded} câu.`
+    : "Chưa có câu nào có đáp án để chấm.";
 
-  elements.resultSummary.textContent = `${scoreText}. ${unansweredKey} cau chua co dap an.`;
+  elements.quizStatus.textContent = `${scoreText} ${unansweredKey ? `(${unansweredKey} câu thiếu đáp án)` : ""}`;
+  renderCurrentQuestion();
 }
 
 function renderQuestionList() {

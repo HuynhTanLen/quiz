@@ -19,6 +19,7 @@
             Lam bai, tim cau hoi, bo sung dap an va nhap them noi dung OCR tu
             tai lieu cung dinh dang.
           </p>
+          <button id="menuToggleBtn" class="ghost" style="margin-top: 16px;">📁 Quản lý ngân hàng & OCR</button>
         </div>
         <div class="hero-card">
           <div class="hero-stat">
@@ -77,6 +78,7 @@
             </div>
             <h3 id="questionText"></h3>
             <div id="optionsList" class="options-list"></div>
+            <div id="inlineFeedback" class="feedback-box hidden"></div>
             <div class="button-row">
               <button id="prevBtn" class="ghost">Cau truoc</button>
               <button id="nextBtn" class="primary">Cau tiep</button>
@@ -85,18 +87,15 @@
           </div>
         </section>
 
-        <section class="panel results-panel">
-          <div class="panel-heading">
-            <h2>Ket qua</h2>
-            <p>Tu dong cham nhung cau da co dap an, con lai duoc luu de bo sung sau.</p>
+        <!-- Sidemenu block -->
+        <div id="sideMenuOverlay" class="sidemenu-overlay hidden"></div>
+        <aside id="sideMenu" class="sidemenu right-closed">
+          <div class="sidemenu-header">
+            <h2>Menu Quản lý</h2>
+            <button id="closeMenuBtn" class="ghost close-btn">&times;</button>
           </div>
-          <div id="resultSummary" class="result-summary">
-            Chua co ket qua.
-          </div>
-          <div id="resultDetails" class="result-details"></div>
-        </section>
-
-        <section class="panel manager-panel">
+          <div class="sidemenu-scroll">
+          <section class="panel manager-panel">
           <div class="panel-heading">
             <h2>Quan ly ngan hang</h2>
             <p>Tim cau hoi, cap nhat dap an va luu vao trinh duyet.</p>
@@ -138,6 +137,8 @@ D. Lua chon D"
             PDF goc da duoc trich san thanh JSON. Khu vuc nay dung de bo sung OCR moi hoac dan du lieu tu tai lieu khac.
           </p>
         </section>
+        </div>
+        </aside>
       </main>
     </div>
 
