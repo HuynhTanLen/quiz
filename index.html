@@ -34,9 +34,10 @@
       </header>
 
       <main class="grid">
-        <section class="panel controls-panel">
-          <div class="panel-heading">
-            <h2>Bat dau</h2>
+        <div class="left-column">
+          <section class="panel">
+            <div class="panel-heading">
+              <h2>Bat dau</h2>
             <p>Tuy chon de thi truoc khi vao che do lam bai.</p>
           </div>
 
@@ -59,7 +60,16 @@
             <button id="startQuizBtn" class="primary">Bat dau lam bai</button>
             <button id="resetQuizBtn" class="ghost">Dat lai</button>
           </div>
-        </section>
+          </section>
+
+          <section id="navigatorPanel" class="panel hidden navigator-panel">
+            <div class="panel-heading nav-heading">
+              <h2 style="font-size: 1.2rem; margin-bottom: 0;">Danh sách câu hỏi</h2>
+              <button id="closeNavigatorBtn" class="ghost mobile-only close-btn">&times;</button>
+            </div>
+            <div id="navigatorGrid" class="navigator-grid"></div>
+          </section>
+        </div>
 
         <section class="panel quiz-panel">
           <div class="panel-heading">
@@ -73,8 +83,13 @@
 
           <div id="quizCard" class="quiz-card hidden">
             <div class="quiz-card-top">
-              <span id="questionCounter" class="counter">Cau 1/1</span>
-              <span id="questionIdBadge" class="badge">ID 1</span>
+              <div>
+                <span id="questionCounter" class="counter">Cau 1/1</span>
+                <span id="questionIdBadge" class="badge">ID 1</span>
+              </div>
+              <button id="mobileNavToggleBtn" class="ghost mobile-only" style="padding: 6px 12px; font-size: 0.9rem;">
+                🔢 Danh sách
+              </button>
             </div>
             <h3 id="questionText"></h3>
             <div id="optionsList" class="options-list"></div>

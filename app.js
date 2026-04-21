@@ -33,6 +33,10 @@ const elements = {
   closeMenuBtn: document.getElementById("closeMenuBtn"),
   sideMenuOverlay: document.getElementById("sideMenuOverlay"),
   sideMenu: document.getElementById("sideMenu"),
+  navigatorPanel: document.getElementById("navigatorPanel"),
+  navigatorGrid: document.getElementById("navigatorGrid"),
+  mobileNavToggleBtn: document.getElementById("mobileNavToggleBtn"),
+  closeNavigatorBtn: document.getElementById("closeNavigatorBtn"),
   searchInput: document.getElementById("searchInput"),
   questionList: document.getElementById("questionList"),
   ocrInput: document.getElementById("ocrInput"),
@@ -68,12 +72,37 @@ function bindEvents() {
   elements.exportBtn.addEventListener("click", exportCurrentData);
   elements.menuToggleBtn.addEventListener("click", toggleMenu);
   elements.closeMenuBtn.addEventListener("click", toggleMenu);
-  elements.sideMenuOverlay.addEventListener("click", toggleMenu);
+  
+  elements.mobileNavToggleBtn.addEventListener("click", () => {
+    elements.navigatorPanel.classList.add("mobile-open");
+    updateOverlay();
+  });
+  
+  elements.closeNavigatorBtn.addEventListener("click", () => {
+    elements.navigatorPanel.classList.remove("mobile-open");
+    updateOverlay();
+  });
+  
+  elements.sideMenuOverlay.addEventListener("click", () => {
+    elements.sideMenu.classList.add("right-closed");
+    elements.navigatorPanel.classList.remove("mobile-open");
+    updateOverlay();
+  });
 }
 
 function toggleMenu() {
   elements.sideMenu.classList.toggle("right-closed");
-  elements.sideMenuOverlay.classList.toggle("hidden");
+  updateOverlay();
+}
+
+function updateOverlay() {
+  const menuOpen = !elements.sideMenu.classList.contains("right-closed");
+  const navOpen = elements.navigatorPanel.classList.contains("mobile-open");
+  if (menuOpen || navOpen) {
+    elements.sideMenuOverlay.classList.remove("hidden");
+  } else {
+    elements.sideMenuOverlay.classList.add("hidden");
+  }
 }
 
 function renderStats() {
@@ -119,7 +148,9 @@ function startQuiz() {
   elements.quizStatus.textContent = `Da tao de ${state.quiz.length} cau. Dang lam bai...`;
   elements.quizEmptyState.classList.add("hidden");
   elements.quizCard.classList.remove("hidden");
+  elements.navigatorPanel.classList.remove("hidden");
   elements.inlineFeedback.classList.add("hidden");
+  renderNavigator();
   renderCurrentQuestion();
 }
 
@@ -131,6 +162,7 @@ function resetQuiz() {
   elements.quizStatus.textContent = "San sang tai ngan hang cau hoi.";
   elements.quizEmptyState.classList.remove("hidden");
   elements.quizCard.classList.add("hidden");
+  elements.navigatorPanel.classList.add("hidden");
   elements.inlineFeedback.classList.add("hidden");
 }
 
@@ -169,6 +201,8 @@ function renderCurrentQuestion() {
     elements.optionsList.appendChild(button);
   });
 
+  updateNavigator();
+
   elements.inlineFeedback.className = "feedback-box hidden";
   if (state.isGraded) {
     elements.inlineFeedback.classList.remove("hidden");
@@ -184,6 +218,50 @@ function renderCurrentQuestion() {
       elements.inlineFeedback.innerHTML = `❌ Sai rồi. Đáp án đúng là: <strong>${question.answer}</strong>`;
     }
   }
+}
+
+function renderNavigator() {
+  elements.navigatorGrid.innerHTML = "";
+  state.quiz.forEach((question, index) => {
+    const btn = document.createElement("button");
+    btn.className = "nav-btn";
+    btn.textContent = index + 1;
+    btn.addEventListener("click", () => {
+      state.currentIndex = index;
+      renderCurrentQuestion();
+      elements.navigatorPanel.classList.remove("mobile-open");
+      updateOverlay();
+    });
+    elements.navigatorGrid.appendChild(btn);
+  });
+  updateNavigator();
+}
+
+function updateNavigator() {
+  if (!elements.navigatorGrid.children.length) return;
+  const buttons = elements.navigatorGrid.querySelectorAll(".nav-btn");
+  
+  state.quiz.forEach((question, index) => {
+    const btn = buttons[index];
+    if (!btn) return;
+
+    btn.className = "nav-btn"; 
+    if (index === state.currentIndex) btn.classList.add("active-question");
+
+    const picked = state.answers[question.id] ?? null;
+
+    if (state.isGraded) {
+      if (!question.answer) {
+        btn.classList.add("warning"); 
+      } else if (picked === question.answer) {
+        btn.classList.add("correct");
+      } else {
+        btn.classList.add("wrong"); 
+      }
+    } else {
+      if (picked) btn.classList.add("answered");
+    }
+  });
 }
 
 function moveQuestion(step) {
