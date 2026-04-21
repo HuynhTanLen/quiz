@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bo Trac Nghiem OCR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Bo de tu PDF</p>
+          <h1>Phan mem trac nghiem OCR</h1>
+          <p class="hero-copy">
+            Lam bai, tim cau hoi, bo sung dap an va nhap them noi dung OCR tu
+            tai lieu cung dinh dang.
+          </p>
+        </div>
+        <div class="hero-card">
+          <div class="hero-stat">
+            <span id="totalQuestions">0</span>
+            <small>cau hoi</small>
+          </div>
+          <div class="hero-stat">
+            <span id="answerCoverage">0%</span>
+            <small>co dap an</small>
+          </div>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel controls-panel">
+          <div class="panel-heading">
+            <h2>Bat dau</h2>
+            <p>Tuy chon de thi truoc khi vao che do lam bai.</p>
+          </div>
+
+          <label>
+            So cau muon lam
+            <input id="questionLimit" type="number" min="1" placeholder="Vi du 30" />
+          </label>
+
+          <label class="checkbox-row">
+            <input id="shuffleQuestions" type="checkbox" checked />
+            Tron thu tu cau hoi
+          </label>
+
+          <label class="checkbox-row">
+            <input id="shuffleOptions" type="checkbox" />
+            Tron dap an A/B/C/D
+          </label>
+
+          <div class="button-row">
+            <button id="startQuizBtn" class="primary">Bat dau lam bai</button>
+            <button id="resetQuizBtn" class="ghost">Dat lai</button>
+          </div>
+        </section>
+
+        <section class="panel quiz-panel">
+          <div class="panel-heading">
+            <h2>Lam bai</h2>
+            <p id="quizStatus">San sang tai ngan hang cau hoi.</p>
+          </div>
+
+          <div id="quizEmptyState" class="empty-state">
+            Chon so cau va bam Bat dau lam bai de tao de.
+          </div>
+
+          <div id="quizCard" class="quiz-card hidden">
+            <div class="quiz-card-top">
+              <span id="questionCounter" class="counter">Cau 1/1</span>
+              <span id="questionIdBadge" class="badge">ID 1</span>
+            </div>
+            <h3 id="questionText"></h3>
+            <div id="optionsList" class="options-list"></div>
+            <div class="button-row">
+              <button id="prevBtn" class="ghost">Cau truoc</button>
+              <button id="nextBtn" class="primary">Cau tiep</button>
+              <button id="submitBtn" class="accent">Cham bai</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel results-panel">
+          <div class="panel-heading">
+            <h2>Ket qua</h2>
+            <p>Tu dong cham nhung cau da co dap an, con lai duoc luu de bo sung sau.</p>
+          </div>
+          <div id="resultSummary" class="result-summary">
+            Chua co ket qua.
+          </div>
+          <div id="resultDetails" class="result-details"></div>
+        </section>
+
+        <section class="panel manager-panel">
+          <div class="panel-heading">
+            <h2>Quan ly ngan hang</h2>
+            <p>Tim cau hoi, cap nhat dap an va luu vao trinh duyet.</p>
+          </div>
+
+          <label>
+            Tim theo noi dung
+            <input id="searchInput" type="search" placeholder="Nhap tu khoa..." />
+          </label>
+
+          <div id="questionList" class="question-list"></div>
+        </section>
+
+        <section class="panel import-panel">
+          <div class="panel-heading">
+            <h2>Nhap OCR/Text</h2>
+            <p>
+              Dan chuoi OCR hoac text cung cau truc de parse them ngan hang cau hoi.
+            </p>
+          </div>
+
+          <textarea
+            id="ocrInput"
+            rows="12"
+            placeholder="Vi du:
+1 Cau hoi?
+A. Lua chon A
+B. Lua chon B
+C. Lua chon C
+D. Lua chon D"
+          ></textarea>
+
+          <div class="button-row">
+            <button id="parseOcrBtn" class="primary">Parse vao ngan hang</button>
+            <button id="exportBtn" class="ghost">Xuat JSON hien tai</button>
+          </div>
+
+          <p id="importStatus" class="muted">
+            PDF goc da duoc trich san thanh JSON. Khu vuc nay dung de bo sung OCR moi hoac dan du lieu tu tai lieu khac.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
